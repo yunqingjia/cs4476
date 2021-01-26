@@ -6,6 +6,7 @@ class Prob2():
         """Load inputAPS1Q2.npy here as a class variable A."""
         ###### START CODE HERE ######
 
+        # test this
 
         ###### END CODE HERE ######
         pass
