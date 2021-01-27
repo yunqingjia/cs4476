@@ -6,7 +6,7 @@ class Prob2():
         """Load inputAPS1Q2.npy here as a class variable A."""
         ###### START CODE HERE ######
 
-        # test this
+        self.A = np.load('inputAPS1Q2.npy')
 
         ###### END CODE HERE ######
         pass
@@ -15,6 +15,10 @@ class Prob2():
         """Do plotting of intensities of A in decreasing value."""
         ###### START CODE HERE ######
 
+        A_sorted = -np.sort(-self.A.reshape((1, self.A.shape[0]*self.A.shape[1])))
+        plt.figure()
+        plt.imshow(A_sorted, cmap='gray', aspect='auto')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -23,6 +27,9 @@ class Prob2():
         """Display histogram of A's intensities with 20 bins here."""
         ###### START CODE HERE ######
 
+        plt.figure()
+        plt.hist(self.A.reshape(-1), 20)
+        plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -35,11 +42,14 @@ class Prob2():
         """
         ###### START CODE HERE ######
 
+        r, c = self.A.shape
+        X = self.A[int(r/2):, :int(c/2)]
 
         ###### END CODE HERE ######
-        pass 
+        pass
     
-        ###### return X ###### 
+        ###### return X ######
+        return X
     
     def prob_2_4(self):
         """Create a new matrix Y, which is the same as A, but with A’s mean intensity value subtracted from each pixel.
@@ -48,11 +58,13 @@ class Prob2():
         """
         ###### START CODE HERE ######
 
+        Y = self.A - np.mean(self.A)
 
         ###### END CODE HERE ######
         pass
     
         ###### return Y ######
+        return Y
     
     def prob_2_5(self):
         """
@@ -62,11 +74,13 @@ class Prob2():
         """
         ###### START CODE HERE ######
 
+        Z = np.zeros(self.A.shape) + (self.A > np.mean(self.A))
 
         ###### END CODE HERE ######
         pass
     
         ###### return Z ######
+        return Z
         
         
         
@@ -78,5 +92,11 @@ if __name__ == '__main__':
     p2.prob_2_2()
     
     X = p2.prob_2_3()
+    # print('X has shape %d x %d.' % X.shape)
     Y = p2.prob_2_4()
+    # print('Y has shape %d x %d.' % Y.shape)
     Z = p2.prob_2_5()
+    # print('Z has shape %d x %d.' % Z.shape)
+    # Zim = np.dstack((np.dstack((Z,np.zeros(Z.shape))), np.zeros(Z.shape)))
+    # plt.imshow(Zim)
+    # plt.show()
