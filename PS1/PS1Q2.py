@@ -75,6 +75,7 @@ class Prob2():
         ###### START CODE HERE ######
 
         Z = np.zeros(self.A.shape) + (self.A > np.mean(self.A))
+        Z = np.dstack((np.dstack((Z,np.zeros(Z.shape))), np.zeros(Z.shape)))
 
         ###### END CODE HERE ######
         pass
@@ -96,7 +97,6 @@ if __name__ == '__main__':
     Y = p2.prob_2_4()
     # print('Y has shape %d x %d.' % Y.shape)
     Z = p2.prob_2_5()
-    # print('Z has shape %d x %d.' % Z.shape)
-    # Zim = np.dstack((np.dstack((Z,np.zeros(Z.shape))), np.zeros(Z.shape)))
-    # plt.imshow(Zim)
+    # print('Z has shape %d x %d x %d.' % Z.shape)
+    # plt.imshow(Z)
     # plt.show()
