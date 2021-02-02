@@ -8,6 +8,7 @@ class Prob3():
         """Load input color image inputPS1Q3.jpg here and assign it as a class variable"""
         ###### START CODE HERE ######
 
+        self.A = cv2.imread('inputPS1Q3.jpg')
 
         ###### END CODE HERE ######
         pass
@@ -22,12 +23,14 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        grayImg = np.dot(rgb, [0.2989, 0.5870, 0.1140]).astype(np.uint8)
 
         ###### END CODE HERE ######
         pass
     
         ###### return gray ######
-        
+        return grayImg
+
     def prob_3_1(self):
         """
         Swap red and green color channels here, and return swapImg
@@ -38,6 +41,7 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        
 
         ###### END CODE HERE ######
         pass
