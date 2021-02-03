@@ -8,7 +8,8 @@ class Prob4():
         """Load input color image indoor.png and outdoor.png here as class variables."""
         ###### START CODE HERE ######
 
-        self.imin = 
+        self.imin = io.imread('indoor.png')
+        self.imout = io.imread('outdoor.png')
 
         ###### END CODE HERE ######
         pass
@@ -18,6 +19,7 @@ class Prob4():
         
         ###### START CODE HERE ######
 
+        
 
         ###### END CODE HERE ######
         pass
