@@ -46,7 +46,7 @@ class Prob3():
         swapImg = swapImg.astype(np.uint8)
         plt.imshow(swapImg)
         plt.savefig('outputPS1Q3_1.png')
-        plt.show()
+        # plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -67,7 +67,7 @@ class Prob3():
         grayImg = self.rgb2gray(self.A)
         plt.imshow(grayImg, cmap='gray')
         plt.savefig('outputPS1Q3_2.png')
-        plt.show()
+        # plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -88,7 +88,7 @@ class Prob3():
         negativeImg = 255 - self.rgb2gray(self.A)
         plt.imshow(negativeImg, cmap='gray')
         plt.savefig('outputPS1Q3_3.png')
-        plt.show()
+        # plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -109,7 +109,7 @@ class Prob3():
         mirrorImg = self.rgb2gray(self.A)[:, ::-1]
         plt.imshow(mirrorImg, cmap='gray')
         plt.savefig('outputPS1Q3_4.png')
-        plt.show()
+        # plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -132,7 +132,7 @@ class Prob3():
         avgImg = ((grayImg + mirrorImg) / 2).astype(np.uint8)
         plt.imshow(avgImg, cmap='gray')
         plt.savefig('outputPS1Q3_5.png')
-        plt.show()
+        # plt.show()
 
         ###### END CODE HERE ######
         pass
@@ -156,7 +156,7 @@ class Prob3():
         addNoiseImg[addNoiseImg > 255] = 255
         plt.imshow(addNoiseImg, cmap='gray')
         plt.savefig('outputPS1Q3_6.png')
-        plt.show()
+        # plt.show()
 
         ###### END CODE HERE ######
         pass
