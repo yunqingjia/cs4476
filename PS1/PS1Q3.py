@@ -8,6 +8,7 @@ class Prob3():
         """Load input color image inputPS1Q3.jpg here and assign it as a class variable"""
         ###### START CODE HERE ######
 
+        self.A = cv2.imread('inputPS1Q3.jpg')
 
         ###### END CODE HERE ######
         pass
@@ -22,12 +23,14 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        gray = np.dot(rgb.astype(np.float), [0.2989, 0.5870, 0.1140]).astype(np.uint8)
 
         ###### END CODE HERE ######
         pass
     
         ###### return gray ######
-        
+        return gray
+
     def prob_3_1(self):
         """
         Swap red and green color channels here, and return swapImg
@@ -38,11 +41,17 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        swapImg = np.copy(self.A)
+        swapImg[:, :, 0], swapImg[:, :, 1] = swapImg[:, :, 1], swapImg[:, :, 0]
+        plt.imshow(swapImg)
+        plt.savefig('outputPS1Q3_1.png')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
     
         ###### return swapImg ######
+        return swapImg
     
     def prob_3_2(self):
         """
@@ -54,11 +63,16 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        grayImg = self.rgb2gray(self.A)
+        plt.imshow(grayImg, cmap='gray')
+        plt.savefig('outputPS1Q3_2.png')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
     
         ###### return grayImg ######
+        return grayImg
     
     def prob_3_3(self):
         """
@@ -70,11 +84,16 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        negativeImg = 255 - self.rgb2gray(self.A)
+        plt.imshow(negativeImg, cmap='gray')
+        plt.savefig('outputPS1Q3_3.png')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
     
         ###### return negativeImg ######
+        return negativeImg
     
     def prob_3_4(self):
         """
@@ -86,11 +105,16 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        mirrorImg = self.rgb2gray(self.A)[:, ::-1]
+        plt.imshow(mirrorImg, cmap='gray')
+        plt.savefig('outputPS1Q3_4.png')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
     
         ###### return mirrorImg ######
+        return mirrorImg
     
     def prob_3_5(self):
         """
@@ -102,11 +126,18 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        grayImg = self.rgb2gray(self.A).astype(np.float)
+        mirrorImg = self.prob_3_4().astype(np.float)
+        avgImg = ((grayImg + mirrorImg) / 2).astype(np.uint8)
+        plt.imshow(avgImg, cmap='gray')
+        plt.savefig('outputPS1Q3_5.png')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
     
         ###### return avgImg ######
+        return avgImg
     
     def prob_3_6(self):
         """
@@ -118,12 +149,19 @@ class Prob3():
         
         ###### START CODE HERE ######
 
+        noise = np.load('noise.npy')
+        grayImg = self.rgb2gray(self.A).astype(np.float)
+        addNoiseImg = noise + grayImg
+        addNoiseImg[addNoiseImg > 255] = 255
+        plt.imshow(addNoiseImg, cmap='gray')
+        plt.savefig('outputPS1Q3_6.png')
+        plt.show()
 
         ###### END CODE HERE ######
         pass
     
         ###### return addNoiseImg ######
-        
+        return addNoiseImg
         
 if __name__ == '__main__': 
     
