@@ -8,7 +8,7 @@ class Prob3():
         """Load input color image inputPS1Q3.jpg here and assign it as a class variable"""
         ###### START CODE HERE ######
 
-        self.A = cv2.imread('inputPS1Q3.jpg')
+        self.A = io.imread('inputPS1Q3.jpg')
 
         ###### END CODE HERE ######
         pass
@@ -41,8 +41,9 @@ class Prob3():
         
         ###### START CODE HERE ######
 
-        swapImg = np.copy(self.A)
-        swapImg[:, :, 0], swapImg[:, :, 1] = swapImg[:, :, 1], swapImg[:, :, 0]
+        swapImg = np.zeros((self.A.shape))
+        swapImg[:, :, 0], swapImg[:, :, 1], swapImg[:, :, 2] = self.A[:, :, 1], self.A[:, :, 0], self.A[:, :, 2]
+        swapImg = swapImg.astype(np.uint8)
         plt.imshow(swapImg)
         plt.savefig('outputPS1Q3_1.png')
         plt.show()

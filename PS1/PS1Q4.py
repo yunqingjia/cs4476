@@ -8,6 +8,7 @@ class Prob4():
         """Load input color image indoor.png and outdoor.png here as class variables."""
         ###### START CODE HERE ######
 
+        self.imin = 
 
         ###### END CODE HERE ######
         pass
