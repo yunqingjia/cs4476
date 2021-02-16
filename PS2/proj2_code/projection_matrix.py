@@ -31,7 +31,16 @@ def objective_func(x: np.ndarray, **kwargs):
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    # append P_34 = 1 to x and reshape into the P matrix
+    P = np.append(x, 1).reshape((3, 4))
+    # transpose the 3D coordinates and stack the transcendental coordinates
+    X = np.vstack(points_3d, np.ones(points_3d.shape[0]))
+    # 3D -> 2D projection
+    Xp = np.dot(P, X)
+    points_proj = np.array([Xp[0]/Xp[2], Xp[1]/Xp[2]])
+    # calculate the difference between projected and actual 2D points
+    diff = (points_proj - points_2d).reshape(-1)
+
     ##############################
 
     return diff
