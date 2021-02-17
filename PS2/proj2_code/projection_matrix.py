@@ -31,15 +31,8 @@ def objective_func(x: np.ndarray, **kwargs):
     ##############################
     # TODO: Student code goes here
 
-    # append P_34 = 1 to x and reshape into the P matrix
     P = np.append(x, 1).reshape((3, 4))
-    # transpose the 3D coordinates and stack the transcendental coordinates
-    X = np.vstack(points_3d, np.ones(points_3d.shape[0]))
-    # 3D -> 2D projection
-    Xp = np.dot(P, X)
-    points_proj = np.array([Xp[0]/Xp[2], Xp[1]/Xp[2]])
-    # calculate the difference between projected and actual 2D points
-    diff = (points_proj - points_2d).reshape(-1)
+    diff = (projection(P, points_3d) - points_2d).reshape(-1)
 
     ##############################
 
@@ -64,9 +57,12 @@ def projection(P: np.ndarray, points_3d: np.ndarray) -> np.ndarray:
     assert points_3d.shape[1]==3
 
     ##############################
-    # TODO: Student code goes here
+    # TODO: Student code goes 
 
-    raise NotImplementedError
+    points_4d = np.vstack((points_3d.T, np.ones(points_3d.shape[0])))
+    Xp = np.matmul(P, points_4d)
+    projected_points_2d = np.array([Xp[0]/Xp[2], Xp[1]/Xp[2]]).T
+
     ##############################
 
     return projected_points_2d
@@ -117,7 +113,17 @@ def estimate_camera_matrix(pts2d: np.ndarray,
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    # modify initial_guess to 1D and remove P_34 as a param bc it's constant
+    x0 = np.delete(initial_guess.reshape(-1), -1)
+    results = least_squares(
+        fun=objective_func,
+        x0=x0,
+        method='lm',
+        verbose=2,
+        max_nfev=50000,
+        kwargs=kwargs)
+    P = np.append(results['x'], 1).reshape((3, 4))
+
     ##############################
 
     print("Time since optimization start", time.time() - start_time)
@@ -145,7 +151,8 @@ def decompose_camera_matrix(P: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    K, R = rq(P[:, :3])
+
     ##############################
 
     return K, R
@@ -170,7 +177,8 @@ def calculate_camera_center(P: np.ndarray,
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    cc = - np.matmul(np.linalg.inv(R_T), np.matmul(np.linalg.inv(K), P[:, -1]))
+
     ##############################
 
     return cc
