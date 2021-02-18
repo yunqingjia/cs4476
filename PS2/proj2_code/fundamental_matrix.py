@@ -29,7 +29,8 @@ def point_line_distance(line: np.ndarray, point: np.ndarray) -> float:
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    error = (a*u + b*v + c) / np.sqrt(a**2 + b**2)
+
     ##############################
 
     return error
@@ -72,7 +73,10 @@ def signed_point_line_errors(x_0s: np.ndarray,
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    for i in range(len(x_0s)):
+        errors.append(point_line_distance(np.dot(F, x_1s[i]), x_0s[i]))
+        errors.append(point_line_distance(np.dot(F.T, x_0s[i]), x_1s[i]))
+
     ##############################
 
     return errors
