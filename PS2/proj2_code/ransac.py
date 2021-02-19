@@ -27,7 +27,8 @@ def calculate_num_ransac_iterations(prob_success: float,
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    num_samples = np.ceil(np.log(1-prob_success)/np.log(1-ind_prob_correct**sample_size)).astype(int)
+
     ##############################
 
     return num_samples
@@ -45,10 +46,10 @@ def find_inliers(x_0s: np.ndarray,
     optimization in part 2.
 
     Args:
-    -   x_0s: A numpy array of shape (N, 2) representing the coordinates
+    -   x_0s: A numpy array of shape (N, 3) representing the coordinates
                    of possibly matching points from the left image
     -   F: The proposed fundamental matrix
-    -   x_1s: A numpy array of shape (N, 2) representing the coordinates
+    -   x_1s: A numpy array of shape (N, 3) representing the coordinates
                    of possibly matching points from the right image
     -   threshold: the maximum error for a point correspondence to be
                     considered an inlier
@@ -65,7 +66,12 @@ def find_inliers(x_0s: np.ndarray,
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    errors = fundamental_matrix.signed_point_line_errors(x_0s, F, x_1s)
+    d1 = np.array(errors[::2])
+    d2 = np.array(errors[1::2])
+    epi_err = np.square(d1) + np.square(d2)
+    inliers = np.where(epi_err < threshold)[0]
+
     ##############################
 
     return inliers
@@ -124,7 +130,33 @@ def ransac_fundamental_matrix(x_0s: int,
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    # Defined success criteria and find the number of RANSAC iterations we need to run
+    P = 0.999     # success rate
+    k = 20         # sample size
+    p = 0.90      # individual success probability
+    threshold = 1 # error threshold
+    S = calculate_num_ransac_iterations(P, k, p)
+    Fs = []
+    inliers_num = []
+
+    # Preprocess the data (N, 2) -> (N, 3)
+    x_0s3, x_1s3 = two_view_data.preprocess_data(x_0s, x_1s)
+
+    # Run iterations
+    for i in range(S):
+        # Select k-sized random sample
+        rand_idx = np.random.choice(np.arange(x_0s.shape[0]), k)
+
+        x0i, x1i = x_0s[rand_idx], x_1s[rand_idx]
+        F = solve_F(x0i, x1i)
+        inliers = find_inliers(x_0s3, F, x_1s3, threshold)
+        Fs.append(F)
+        inliers_num.append(len(inliers))
+
+    best_F = Fs[np.argmax(inliers_num)]
+    best_inliers_idx = find_inliers(x_0s3, best_F, x_1s3, threshold)
+    inliers_x_0, inliers_x_1 = x_0s[best_inliers_idx], x_1s[best_inliers_idx]
+
     ##############################
 
     return best_F, inliers_x_0, inliers_x_1
