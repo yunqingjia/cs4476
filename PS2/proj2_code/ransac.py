@@ -66,11 +66,25 @@ def find_inliers(x_0s: np.ndarray,
     ##############################
     # TODO: Student code goes here
 
+    # probs wrong but less wrong
     errors = fundamental_matrix.signed_point_line_errors(x_0s, F, x_1s)
     d1 = np.array(errors[::2])
     d2 = np.array(errors[1::2])
     epi_err = np.square(d1) + np.square(d2)
-    inliers = np.where(epi_err < threshold)[0]
+    inliers = np.where(epi_err <= threshold)[0]
+
+    # nope still wrong
+    # inliers = []
+    # for i in range(x_0s.shape[0]):
+    #     # epi line from x0s
+    #     line0 = np.dot(F, x_0s[i])
+    #     err0 = fundamental_matrix.point_line_distance(line0, x_1s[i])
+    #     line1 = np.dot(F, x_1s[i])
+    #     err1 = fundamental_matrix.point_line_distance(line1, x_0s[i])
+    #     epi_err = np.sqrt(err0**2 + err1**2)
+    #     if epi_err <= threshold:
+    #         inliers.append(i)
+    # inliers = np.array(inliers)
 
     ##############################
 

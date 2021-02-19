@@ -20,7 +20,8 @@ def recover_E_from_F(f_matrix: np.ndarray, k_matrix: np.ndarray) -> np.ndarray:
     ##############################
     # TODO: Student code goes here
 
-    raise NotImplementedError
+    e_matrix = np.dot(np.dot(k_matrix.T, f_matrix), k_matrix)
+
     ##############################
 
     return e_matrix
