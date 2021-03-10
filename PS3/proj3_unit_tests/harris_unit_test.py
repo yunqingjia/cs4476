@@ -39,7 +39,6 @@ def verify(function) -> str:
   except AssertionError:
     return "\x1b[31m\"Wrong\"\x1b[0m"
 
-
 def test_get_gradients():
   sobel_x = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
   sobel_y = np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]])
@@ -57,7 +56,6 @@ def test_get_gradients():
   ix, iy = get_gradients(dummy_image)
 
   assert (np.allclose(true_ix, ix) and np.allclose(true_iy, iy)) or (np.allclose(true_ix2, ix) and np.allclose(true_iy2, iy))
-
 
 def test_get_gradients2():
 
@@ -98,9 +96,6 @@ def test_get_gradients2():
   ix, iy = get_gradients(dummy_image)
 
   assert (np.allclose(true_ix, ix) and np.allclose(true_iy, iy)) or (np.allclose(true_ix2, ix) and np.allclose(true_iy2, iy))
-  
-  
-
 
 def test_gaussian_kernel():
   gt = np.array([[0.11053241, 0.11139933, 0.11053241],
@@ -115,8 +110,8 @@ def test_second_moment():
 
   #sanity check, ksize=1 sigma =1, output = input
   sx2, sy2, sxsy = second_moments(ix, iy, ksize=1, sigma=1)
-  assert np.allclose(sx2,ix * ix) and np.allclose(sy2, iy * iy) and np.allclose(sxsy, ix * iy)
 
+  assert np.allclose(sx2,ix * ix) and np.allclose(sy2, iy * iy) and np.allclose(sxsy, ix * iy)
 
   #case 2: ksize =3 sigma = 3
   sx2, sy2, sxsy = second_moments(ix, iy, ksize=3, sigma=3)
@@ -135,7 +130,6 @@ def test_second_moment():
   assert np.allclose(out_sx2,sx2,rtol=1e-04)
   assert np.allclose(out_sy2,sy2,rtol=1e-04)
   assert np.allclose(out_sxsy,sxsy,rtol=1e-04)
-
 
 def test_corner_response():
   """
@@ -160,9 +154,8 @@ def test_corner_response():
       [-16.2000, -13.8000,  -1.2000],
       [  5.5500,   3.2000,   0.5500]]
     )
+
   assert np.allclose(R, R_gt,rtol=1e-04)
-
-
 
 def test_get_interest_points():
   """
@@ -230,4 +223,3 @@ def test_find_single_valid_corner():
 
   x, y, R, confidence = get_interest_points(img * 250)
   assert (x[0] == 16) and (y[0] == 10) and (np.max(R) != confidence[0])
-
