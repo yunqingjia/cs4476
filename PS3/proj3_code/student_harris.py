@@ -28,8 +28,10 @@ def get_gaussian_kernel(ksize, sigma):
     # TODO: YOUR GAUSSIAN KERNEL CODE HERE                                      #
     #############################################################################
 
-    raise NotImplementedError('`get_gaussian_kernel` function in ' +
-    '`student_harris.py` needs to be implemented')
+    k_1D = cv2.getGaussianKernel(ksize, sigma)
+    kernel = np.matmul(k_1D, k_1D.T)
+
+    assert abs(np.sum(kernel)-1.0) <= 1e-6
 
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -60,8 +62,16 @@ def my_filter2D(image, filt):
     # TODO: YOUR MY FILTER 2D CODE HERE                                         #
     #############################################################################
 
-    raise NotImplementedError('`my_filter2D` function in ' +
-    '`student_harris.py` needs to be implemented')
+    n = np.int((filt.shape[0]-1)/2)
+    pad_img = cv2.copyMakeBorder(image, n, n, n, n, cv2.BORDER_CONSTANT)
+    conv_image = np.zeros(image.shape)
+    filt = np.flip(filt, (0,1))
+
+    for r in range(n, image.shape[0]+n):
+        for c in range(n, image.shape[1]+n):
+            subimg = pad_img[r-n:r+n+1, c-n:c+n+1]
+            conv_image[r-n, c-n] = np.sum(np.multiply(filt, subimg))
+
 
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -89,15 +99,25 @@ def get_gradients(image):
     # TODO: YOUR IMAGE GRADIENTS CODE HERE                                      #
     #############################################################################
 
-    raise NotImplementedError('`get_gradients` function in ' +
-    '`student_harris.py` needs to be implemented')
+    # define Sobel filter matrices
+    Mx = np.array([[-1, 0, 1],
+                   [-2, 0, 2],
+                   [-1, 0, 1]])
+
+    My = np.array([
+                   [-1, -2, -1],
+                   [ 0,  0,  0],
+                   [ 1,  2,  1]
+                   ])
+
+    ix = my_filter2D(image, Mx)
+    iy = my_filter2D(image, My)
 
     #############################################################################
     #                             END OF YOUR CODE                              #
     #############################################################################
     
     return ix, iy
-
 
 def remove_border_vals(image, x, y, c, window_size = 16):
     """
@@ -126,9 +146,34 @@ def remove_border_vals(image, x, y, c, window_size = 16):
     # TODO: YOUR REMOVE BORDER VALS CODE HERE                                   #
     #############################################################################
 
-    raise NotImplementedError('`remove_border_vals` function in ' +
-    '`student_harris.py` needs to be implemented')
-    
+    # print(len(x))
+    w = np.int(np.floor(window_size/2))
+    del_idx = []
+
+    for i in range(len(x)):
+
+        if (x[i] < w):
+            del_idx.append(i)
+        elif (x[i] >= (image.shape[0]-w)):
+            del_idx.append(i)
+        elif (y[i] < w):
+            del_idx.append(i)
+        elif (y[i] >= (image.shape[1]-w)):
+            del_idx.append(i)
+
+    # xnew = []
+    # ynew = []
+    # cnew = []
+
+    # for i in range(len(x)-1, -1, -1):
+    #     del_x = False
+    #     del_y = False
+    #     if (x[i] < w):
+
+    #         continue
+
+    x, y, c = np.delete(x, del_idx), np.delete(y, del_idx), np.delete(c, del_idx)
+    # print(len(x))
     
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -161,8 +206,10 @@ def second_moments(ix, iy, ksize = 7, sigma = 10):
     # TODO: YOUR SECOND MOMENTS CODE HERE                                       #
     #############################################################################
 
-    raise NotImplementedError('`second_moments` function in ' +
-    '`student_harris.py` needs to be implemented')
+    kernel = get_gaussian_kernel(ksize, sigma)
+    sx2 = my_filter2D(ix*ix, kernel)
+    sy2 = my_filter2D(iy*iy, kernel)
+    sxsy = my_filter2D(ix*iy, kernel)
     
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -193,8 +240,7 @@ def corner_response(sx2, sy2, sxsy, alpha):
     # TODO: YOUR CORNER RESPONSE CODE HERE                                       #
     #############################################################################
 
-    raise NotImplementedError('`corner_response` function in ' +
-    '`student_harris.py` needs to be implemented')
+    R = sx2*sy2 - sxsy*sxsy - alpha*np.square(sx2+sy2)
     
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -232,8 +278,22 @@ def non_max_suppression(R, neighborhood_size = 7):
     # TODO: YOUR NON MAX SUPPRESSION CODE HERE                                  #
     #############################################################################
 
-    raise NotImplementedError('`non_max_suppression` function in ' +
-    '`student_harris.py` needs to be implemented')
+    # use the global median to threshold the R matrix
+    # R[R < np.median(R)] = 0
+    R_local_pts = np.zeros(R.shape)
+
+    local_maxima = maximum_filter(R, neighborhood_size)
+    # R_local_pts = np.copy(R)
+    R[R != local_maxima] = 0
+    R_local_pts = R
+    R[R_local_pts < np.median(R_local_pts)] = 0
+
+    # for i in range(R.shape[0]-neighborhood_size):
+    #     for j in range(R.shape[1]-neighborhood_size):
+    #         window = R[i:(i+neighborhood_size), j:(j+neighborhood_size)]
+    #         ii, jj = np.unravel_index(window.argmax(), window.shape)
+    #         R_local_pts[i+ii, j+jj] = np.max(window)
+
 
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -241,7 +301,6 @@ def non_max_suppression(R, neighborhood_size = 7):
 
     return R_local_pts
     
-
 def get_interest_points(image, n_pts = 1500):
     """
     Implement the Harris corner detector (See Szeliski 4.1.1) to start with.
@@ -277,9 +336,29 @@ def get_interest_points(image, n_pts = 1500):
     #############################################################################
     # TODO: YOUR HARRIS CORNER DETECTOR CODE HERE                               #
     #############################################################################
-    
-    raise NotImplementedError('`get_interest_points` function in ' +
-    '`student_harris.py` needs to be implemented')
+
+    ix, iy = get_gradients(image)
+    sx2, sy2, sxsy = second_moments(ix, iy, ksize=7, sigma=10)
+    R = corner_response(sx2, sy2, sxsy, alpha=0.05)
+    # print('raw R zeros: ' + str(R.nonzero()[0].shape))
+
+    R_local_pts = non_max_suppression(R, neighborhood_size=7)
+    # print('NMS: ' + str(R_local_pts.nonzero()[0].shape))
+
+    x, y = R_local_pts.nonzero()[0], R_local_pts.nonzero()[1]
+    confidences = R_local_pts[x, y]
+
+    x, y, confidences = remove_border_vals(image, x, y, confidences, window_size=2)
+    border = len(np.where(x>=image.shape[0]-8))
+    # print(border)
+
+    # remove border from R_local_pts matrix
+    # w = np.int(16/2)
+    # R_local_pts[0:w, :] = 0
+    # R_local_pts[:, 0:w] = 0
+    # R_local_pts[-w:, :] = 0
+    # R_local_pts[:, -w:] = 0
+
 
     #############################################################################
     #                             END OF YOUR CODE                              #
