@@ -25,8 +25,8 @@ def get_magnitudes_and_orientations(dx, dy):
     # TODO: YOUR CODE HERE                                                      #                                          #
     #############################################################################
 
-    raise NotImplementedError('`get_magnitudes_and_orientations` function in ' +
-        '`student_sift.py` needs to be implemented')
+    magnitudes = np.sqrt(np.square(dx) + np.square(dy))
+    orientations = np.arctan2(dy, dx)
 
     #############################################################################
     #                             END OF YOUR CODE                              #
