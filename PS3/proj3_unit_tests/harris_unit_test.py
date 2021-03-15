@@ -5,6 +5,7 @@ import cv2
 import pdb
 import numpy as np
 from pathlib import Path
+from matplotlib import pyplot as plt
 
 from proj3_code.student_harris import (
   get_gaussian_kernel, 
@@ -188,8 +189,6 @@ def test_get_interest_points():
   xy = [(x[i],y[i]) for i in range(len(x))]
   assert (9,9) in xy #(9,9) must be in the interest points
 
-
-
 def test_find_single_valid_corner():
 
   img = np.array([
@@ -220,6 +219,9 @@ def test_find_single_valid_corner():
       [0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
     ])
 
-
   x, y, R, confidence = get_interest_points(img * 250)
+
+
+  
+
   assert (x[0] == 16) and (y[0] == 10) and (np.max(R) != confidence[0])

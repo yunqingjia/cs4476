@@ -62,10 +62,10 @@ def my_filter2D(image, filt):
     # TODO: YOUR MY FILTER 2D CODE HERE                                         #
     #############################################################################
 
-    n = np.int((filt.shape[0]-1)/2)
+    n = filt.shape[0]//2
     pad_img = cv2.copyMakeBorder(image, n, n, n, n, cv2.BORDER_CONSTANT)
     conv_image = np.zeros(image.shape)
-    filt = np.flip(filt, (0,1))
+    filt = np.flip(filt)
 
     for r in range(n, image.shape[0]+n):
         for c in range(n, image.shape[1]+n):
@@ -100,15 +100,13 @@ def get_gradients(image):
     #############################################################################
 
     # define Sobel filter matrices
-    Mx = np.array([[-1, 0, 1],
-                   [-2, 0, 2],
-                   [-1, 0, 1]])
+    Mx = np.array([[-1.0, 0.0, 1.0],
+                   [-2.0, 0.0, 2.0],
+                   [-1.0, 0.0, 1.0]])
 
-    My = np.array([
-                   [-1, -2, -1],
-                   [ 0,  0,  0],
-                   [ 1,  2,  1]
-                   ])
+    My = np.array([[-1.0, -2.0, -1.0],
+                   [ 0.0,  0.0,  0.0],
+                   [ 1.0,  2.0,  1.0]])
 
     ix = my_filter2D(image, Mx)
     iy = my_filter2D(image, My)
@@ -147,7 +145,7 @@ def remove_border_vals(image, x, y, c, window_size = 16):
     #############################################################################
 
     # print(len(x))
-    w = np.int(np.floor(window_size/2))
+    w = window_size//2
     del_idx = []
 
     for i in range(len(x)):
@@ -161,19 +159,7 @@ def remove_border_vals(image, x, y, c, window_size = 16):
         elif (y[i] >= (image.shape[1]-w)):
             del_idx.append(i)
 
-    # xnew = []
-    # ynew = []
-    # cnew = []
-
-    # for i in range(len(x)-1, -1, -1):
-    #     del_x = False
-    #     del_y = False
-    #     if (x[i] < w):
-
-    #         continue
-
     x, y, c = np.delete(x, del_idx), np.delete(y, del_idx), np.delete(c, del_idx)
-    # print(len(x))
     
     #############################################################################
     #                             END OF YOUR CODE                              #
@@ -349,15 +335,17 @@ def get_interest_points(image, n_pts = 1500):
     confidences = R_local_pts[x, y]
 
     x, y, confidences = remove_border_vals(image, x, y, confidences, window_size=2)
-    border = len(np.where(x>=image.shape[0]-8))
-    # print(border)
+    
+    idx = np.argsort(confidences)
+    x, y, confidences = x[idx], y[idx], confidences[idx]
 
-    # remove border from R_local_pts matrix
-    # w = np.int(16/2)
-    # R_local_pts[0:w, :] = 0
-    # R_local_pts[:, 0:w] = 0
-    # R_local_pts[-w:, :] = 0
-    # R_local_pts[:, -w:] = 0
+    if len(confidences) > n_pts:
+        x, y, confidences = x[-1*n_pts:], y[-1*n_pts:], confidences[-1*n_pts:]
+
+    # i think i accidentally flipped x and y at some point so im switching them back
+    x1 = x
+    x = y
+    y = x1 
 
 
     #############################################################################
