@@ -10,7 +10,7 @@ from matplotlib.patches import Circle
 
 from verify_student_output import OutputCheck
 from detect_circles_student import detectCircles
-from detect_circles_student import showCircles
+
 
 im = plt.imread("data/im1.jpg")
 
@@ -37,9 +37,7 @@ class PS04Test(OutputCheck):
         print("Testing circle detector on {0} circle".format(identifier))
         useGrad = False
         thresh = 0.95
-        circles, houghAccumulator = detectCircles(im, radius, thresh, useGrad)
-        showCircles(im, circles, houghAccumulator, showCenter=True)
-
+        circles, _ = detectCircles(im, radius, thresh, useGrad)
 
         r, c = circles.shape
         self.assertEqual(c, 3, msg="Returned numpy array should have dimensions K x 3")
@@ -70,8 +68,7 @@ class PS04Test(OutputCheck):
         print("Testing circle detector on {0} circle".format(identifier))
         useGrad = True
         thresh = 0.95
-        circles, houghAccumulator = detectCircles(im, radius, thresh, useGrad)
-        showCircles(im, circles, houghAccumulator, showCenter=True)
+        circles, _ = detectCircles(im, radius, thresh, useGrad)
 
         r, c = circles.shape
         self.assertEqual(c, 3, msg="Returned numpy array should have dimensions K x 3")
@@ -128,3 +125,4 @@ class PS04Test(OutputCheck):
         )
 
         print("*" * 50)
+

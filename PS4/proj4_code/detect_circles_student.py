@@ -30,7 +30,15 @@ def showCircles(
 
     ax1.set_aspect("equal")
     ax1.imshow(img)
-    ax2.imshow(houghAccumulator)
+
+    if (len(houghAccumulator.shape)==3):
+        # print(houghAccumulator.shape[2])
+        # for r in range(houghAccumulator.shape[2]):
+        #     plt.figure()
+        #     plt.imshow(houghAccumulator[:, :, r])
+        pass
+    else:
+        ax2.imshow(houghAccumulator)
 
     for circle in circles:
         x, y, rad = circle
@@ -87,8 +95,103 @@ def detectCircles(
     ## TODO: YOUR CODE GOES HERE                                                        ##
     ######################################################################################
 
+    imgGray = rgb2gray(img)
+    edgeMap = feature.canny(imgGray)
+    # plt.figure()
+    # plt.imshow(edgeMap)
+    (x, y) = np.where(edgeMap)
+    (h, w) = imgGray.shape
+    houghAccumulator = np.zeros((h, w))
+
+    if useGradient:
+        # if using the gradient, use the gradient direction as theta
+        dfdx = ndimage.sobel(imgGray, axis=0)
+        dfdy = ndimage.sobel(imgGray, axis=1)
+        theta = np.arctan2(dfdy, dfdx)
+
+        for i in range(len(x)):
+            a = np.rint(x[i] - radius*np.cos(theta[x[i], y[i]])).astype(int)
+            b = np.rint(y[i] - radius*np.sin(theta[x[i], y[i]])).astype(int)
+
+            # check to see if the center is inside the image
+            if ((a < h) & (b < w)):
+                houghAccumulator[a, b] += 1
+
+    else:
+        # if not using the gradient, iterate from 0-360 degrees 
+        step_size = 12
+        theta = np.arange(360+step_size, step=step_size)/180*np.pi
+        
+        for i in range(len(x)):
+            for theta_ in theta:
+                a = np.rint(x[i] + radius*np.cos(theta_)).astype(int)
+                b = np.rint(y[i] + radius*np.sin(theta_)).astype(int)
+
+                if ((a < h) & (b < w)):
+                    houghAccumulator[a, b] += 1
+
+    max_votes = np.max(houghAccumulator)
+    (xc, yc) = np.where(houghAccumulator >= (threshold*max_votes))
+    circles = np.vstack((np.vstack((xc, yc)), radius*np.ones(len(xc)))).T
+
+    return circles, houghAccumulator
+
     ######################################################################################
     ## YOUR CODE ENDS HERE                                                              ##
     ######################################################################################
 
-    raise NotImplementedError
+def detectCirclesUnknownRadii(
+    img: np.ndarray,
+    threshold: float,
+    sigma: float = 1,
+    useGradient: bool = False,
+):
+
+    imgGray = rgb2gray(img)
+    edgeMap = feature.canny(imgGray, sigma)
+    plt.figure()
+    plt.imshow(edgeMap)
+    (x, y) = np.where(edgeMap)
+    (h, w) = imgGray.shape
+    # define range of radius
+    r_start, r_stop, r_step = 10, 100, 10
+    radii = np.arange(r_start, r_stop+r_step, r_step)
+    houghAccumulator = np.zeros((h, w, len(radii)))
+
+    if useGradient:
+        # if using the gradient, use the gradient direction as theta
+        dfdx = ndimage.sobel(imgGray, axis=0)
+        dfdy = ndimage.sobel(imgGray, axis=1)
+        theta = np.arctan2(dfdy, dfdx)
+
+        for i in range(len(x)):
+            for radius in radii:
+                a = np.rint(x[i] + radius*np.cos(theta[x[i], y[i]])).astype(int)
+                b = np.rint(y[i] + radius*np.sin(theta[x[i], y[i]])).astype(int)
+
+                # check to see if the center is inside the image
+                if ((a < h) & (b < w) & ((radius//r_step) < len(radii))):
+                    houghAccumulator[a, b, radius//r_step] += 1
+
+    else:
+        # if not using the gradient, iterate from 0-360 degrees 
+        step_size = 12
+        theta = np.arange(360+step_size, step=step_size)/180*np.pi
+
+        for i in range(len(x)):
+            for radius in radii:
+                for theta_ in theta:
+                    a = np.rint(x[i] + radius*np.cos(theta_)).astype(int)
+                    b = np.rint(y[i] + radius*np.sin(theta_)).astype(int)
+
+                # check to see if the center is inside the image
+                if ((a < h) & (b < w) & ((radius//r_step) < len(radii))):
+                    houghAccumulator[a, b, radius//r_step] += 1
+
+
+    max_votes = np.max(houghAccumulator)
+    
+    (xc, yc, rc) = np.where(houghAccumulator >= (threshold*max_votes))
+    circles = np.vstack((np.vstack((xc, yc)), rc*r_step)).T
+
+    return circles, houghAccumulator
